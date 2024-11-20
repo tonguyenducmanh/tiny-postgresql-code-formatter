@@ -13,6 +13,7 @@ const LETTERS = /^[a-z_.:*%><=]+$/i;
 const TAB = config.tabSpace;
 let _currentLevel = 0;
 let _startNewLine = false;
+let _lastRecusiveValue = null;
 /**
  * Hàm chính để format code
  * @param {string} sourceCode: text cần format
@@ -249,8 +250,14 @@ function generateParser(tokens) {
           (token.type === enumeration.tokenType.parenthesis &&
             token.value !== ")"))
       ) {
-        node.params.push(walk());
-        token = tokens[current];
+        let nextWalk = walk();
+        if (nextWalk) {
+          node.params.push(nextWalk);
+          token = tokens[current];
+        } else {
+          // And return the node.
+          return node;
+        }
       }
 
       current++;
@@ -285,53 +292,72 @@ function generateParser(tokens) {
 function codeGenerator(node) {
   let tabSpace = _currentLevel > 0 ? TAB.repeat(_currentLevel) : "";
   let tabForNewLine = _startNewLine ? TAB : "";
+  let result = null;
   _startNewLine = false;
   switch (node.type) {
     // node là program thì chạy toàn bộ các node con
-    case enumeration.astType.program:
-      return node.body.map((x) => codeGenerator(x)).join("");
-
+    case enumeration.astType.program: {
+      let allValues = node.body.map((x) => codeGenerator(x));
+      result = allValues.join("");
+      break;
+    }
     // bỏ qua xuống dòng thừa thãi từ source code
-    case enumeration.astType.newLine:
-      return null;
+    case enumeration.astType.newLine: {
+      result = null;
+      break;
+    }
 
     case enumeration.astType.semicolon:
-    case enumeration.astType.comment:
-      return node.value + "\n";
-    case enumeration.astType.semi:
+    case enumeration.astType.comment: {
+      result = node.value + "\n";
+      break;
+    }
+    case enumeration.astType.semi: {
       _startNewLine = true;
-      return node.value + "\n" + tabSpace;
-    case enumeration.astType.keyword:
+      result = node.value + "\n" + tabSpace;
+      break;
+    }
+    case enumeration.astType.keyword: {
       if (config.listKeyWordBreakLine.includes(node.value)) {
         _startNewLine = true;
-        return "\n" + tabSpace + node.value + "\n" + tabSpace;
+        result = "\n" + tabSpace + node.value + "\n" + tabSpace;
       } else if (
         config.listMutipleKeyWordBreakLine.find((x) => x.startsWith(node.value))
       ) {
-        return "\n" + tabSpace + node.value + " ";
+        result = "\n" + tabSpace + node.value + " ";
       } else if (
         config.listMutipleKeyWordBreakLine.find((x) => x.endsWith(node.value))
       ) {
         _startNewLine = true;
-        return node.value + "\n" + tabSpace;
+        result = node.value + "\n" + tabSpace;
       } else {
-        return tabForNewLine + node.value + " ";
+        result = tabForNewLine + node.value + " ";
       }
-    case enumeration.astType.number:
-      return tabForNewLine + node.value + " ";
-    case enumeration.astType.text:
-      return tabForNewLine + '"' + node.value + '"';
-    case enumeration.astType.callExpression:
+      break;
+    }
+    case enumeration.astType.number: {
+      result = tabForNewLine + node.value + " ";
+      break;
+    }
+    case enumeration.astType.text: {
+      result = tabForNewLine + '"' + node.value + '"';
+      break;
+    }
+    case enumeration.astType.callExpression: {
       _currentLevel++;
       _startNewLine = true;
-      let result = [
+      let resultTemp = [
         "(",
         node.params.map((x) => codeGenerator(x)).join(""),
         tabSpace + ")",
       ].join("\n");
       _currentLevel--;
-      return result;
+      result = resultTemp;
+      break;
+    }
     default:
       throw new TypeError(node.type);
   }
+  _lastRecusiveValue = result;
+  return result;
 }
