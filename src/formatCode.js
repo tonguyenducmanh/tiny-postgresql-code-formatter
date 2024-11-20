@@ -12,6 +12,7 @@ const NEWLINE = /\n/;
 const LETTERS = /^[a-z_.*%><=]+$/i;
 const TAB = "    ";
 let _currentLevel = 0;
+let _startNewLine = false;
 /**
  * Hàm chính để format code
  * @param {string} sourceCode: text cần format
@@ -273,31 +274,40 @@ function generateParser(tokens) {
  */
 function codeGenerator(node) {
   let tabSpace = _currentLevel > 0 ? TAB.repeat(_currentLevel) : "";
-  let tabSpaceSub = TAB.repeat((_currentLevel ?? 0) + 1);
+  let tabForNewLine = _startNewLine ? TAB : "";
+  _startNewLine = false;
   switch (node.type) {
     // node là program thì chạy toàn bộ các node con
     case enumeration.astType.program:
       return node.body.map((x) => codeGenerator(x)).join("");
 
+    // bỏ qua xuống dòng thừa thãi từ source code
+    case enumeration.astType.newLine:
+      return null;
+
     case enumeration.astType.semicolon:
     case enumeration.astType.comment:
       return node.value + "\n";
     case enumeration.astType.keyword:
+      if (
+        ["select", "where", "having", "and", "or", "from"].includes(node.value)
+      ) {
+        _startNewLine = true;
+        return "\n" + tabSpace + node.value + "\n" + tabSpace;
+      }
+      return tabForNewLine + node.value + " ";
     case enumeration.astType.number:
-      return node.value + " ";
+      return tabForNewLine + node.value + " ";
     case enumeration.astType.text:
-      return '"' + node.value + '" ';
-    // bỏ qua xuống dòng thừa thãi từ source code
-    case enumeration.astType.newLine:
-      return null;
+      return tabForNewLine + '"' + node.value + '" ';
     case enumeration.astType.callExpression:
       _currentLevel++;
+      _startNewLine = true;
       let result = [
         "",
         tabSpace + "(",
-        tabSpaceSub + node.params.map((x) => codeGenerator(x)).join(""),
+        node.params.map((x) => codeGenerator(x)).join(""),
         tabSpace + ")",
-        "",
       ].join("\n");
       _currentLevel--;
       return result;
