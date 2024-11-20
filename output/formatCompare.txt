@@ -1,0 +1,1 @@
+--samplecodecomment/**samplerowcodecomment*/select*fromsme.account_objectwhere(account_object_idisnotnullandaccount_object_code="tdmanh")oraccount_object_type=1;

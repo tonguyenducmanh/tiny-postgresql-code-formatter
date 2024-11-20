@@ -7,8 +7,8 @@ import { formatCode } from "./formatCode.js";
 import { validateCode } from "./validateCode.js";
 
 const _utf8 = "utf8";
-const _inputPath = "./input/input.sql"; // Change this to your input file
-const _outputPath = "./output/output.sql"; // Output file
+const _inputPath = "./input/input.sql";
+const _outputPath = "./output/output.sql";
 const _errorResultMessage = "formatted code error";
 
 /**
@@ -29,7 +29,7 @@ export function main() {
       formattedCode = _errorResultMessage;
     }
 
-    // lưu file kết quả+
+    // lưu file kết quả
     fs.writeFile(_outputPath, formattedCode, (err) => {
       if (err) {
         throw new Error(`Error writing file: ${err}`);
