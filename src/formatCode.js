@@ -303,7 +303,9 @@ function codeGenerator(node) {
       return node.value + "\n" + tabSpace;
     case enumeration.astType.keyword:
       if (
-        ["select", "where", "having", "and", "or", "from"].includes(node.value)
+        ["select", "where", "having", "and", "or", "from", "drop"].includes(
+          node.value
+        )
       ) {
         _startNewLine = true;
         return "\n" + tabSpace + node.value + "\n" + tabSpace;
