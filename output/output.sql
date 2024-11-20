@@ -3,38 +3,38 @@
 * sample row code comment
 */
 
-select
+SELECT
     acount_object_id ,
     account_object_code ,
     account_object_name 
-from
+FROM
     sme.account_object 
-where
+WHERE
 (
-    account_object_id is not null 
-    and
+    account_object_id IS NOT NULL 
+    AND
         account_object_code = "tdmanh"
-    or
+    OR
     (
 
-        select
+        SELECT
             1 
-        from
+        FROM
             sme.msc_user 
-        order by
-            created desc 
-        group by
+        ORDER BY
+            created DESC 
+        GROUP BY
             modified 
-        having
+        HAVING
             total >= 0 
     )
-    and
+    AND
         1 = 1 
 )
-or
+OR
     account_object_type = 1 ;
 
-select
+SELECT
     * 
-from
+FROM
     sme.gl_voucher ;
