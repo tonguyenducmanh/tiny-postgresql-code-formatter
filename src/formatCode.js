@@ -18,6 +18,7 @@ const LETTERS = /^[a-z_.*%><=]+$/i;
  */
 export function formatCode(sourceCode) {
   let tokens = tokenizer(sourceCode);
+  let ast = parser(tokens);
   return sourceCode;
 }
 
@@ -189,4 +190,79 @@ function tokenizer(input) {
   }
 
   return tokens;
+}
+
+/**
+ * biến đổi các token thành Abstract Syntax Tree
+ * @param {array} tokens: danh sách các token đã parse được
+ */
+function parser(tokens) {
+  let current = 0;
+
+  function walk() {
+    let token = tokens[current];
+
+    if (
+      [
+        ...enumeration.tokenType.number,
+        enumeration.tokenType.text,
+        enumeration.tokenType.keyword,
+        enumeration.tokenType.semicolon,
+        enumeration.tokenType.newLine,
+        enumeration.tokenType.comment,
+      ].includes(token.type)
+    ) {
+      current++;
+      return {
+        type: enumeration.astType[token.type],
+        value: token.value,
+      };
+    }
+
+    if (
+      token.type === enumeration.tokenType.parenthesis &&
+      token.value === "("
+    ) {
+      token = tokens[++current];
+
+      let node = {
+        type: enumeration.astType.callExpression,
+        name: token.value,
+        params: [],
+      };
+
+      token = tokens[++current];
+
+      while (
+        token.type !== enumeration.tokenType.parenthesis ||
+        (token.type === enumeration.tokenType.parenthesis &&
+          token.value !== ")")
+      ) {
+        node.params.push(walk());
+        token = tokens[current];
+      }
+
+      current++;
+
+      // And return the node.
+      return node;
+    }
+
+    // throw new TypeError(token.type);
+    // tạm thời next
+    current++;
+  }
+
+  // cây phân hệ
+  let ast = {
+    type: enumeration.astType.program,
+    body: [],
+  };
+
+  while (current < tokens.length) {
+    ast.body.push(walk());
+  }
+
+  // trả về cây phân hệ đã parse
+  return ast;
 }
