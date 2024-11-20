@@ -4,6 +4,9 @@
 
 import { enumeration } from "./enumeration.js";
 import { config } from "./config.js";
+import { postgreSQLKeyword } from "./postgreSQLKeyword.js";
+import "./prototype.js";
+
 const NUMBERS = /[0-9]/;
 const WHITESPACE = /\s/;
 const BREAKLINE = `
@@ -376,20 +379,37 @@ function buildCallExpressionText(node, tabSpace) {
  */
 function buildKeyWordText(node, tabSpace, tabForNewLine) {
   let result = null;
-  if (config.listKeyWordBreakLine.includes(node.value)) {
+  let valueBuild = node.value;
+  // kiểm tra xem có auto viết hoa từ khóa này không
+  if (postgreSQLKeyword.find((x) => node.value.compareText(x))) {
+    if (config?.usingUpperCaseKeyWord) {
+      valueBuild = node.value.toUpperCase();
+    } else {
+      valueBuild = node.value.toLowerCase();
+    }
+  }
+
+  // kiểm tra xem phải danh sách các từ bắt đầu xuống dòng không
+  if (config.listKeyWordBreakLine.find((x) => node.value.compareText(x))) {
     _startNewLine = true;
-    result = "\n" + tabSpace + node.value + "\n" + tabSpace;
-  } else if (
-    config.listMutipleKeyWordBreakLine.find((x) => x.startsWith(node.value))
+    result = "\n" + tabSpace + valueBuild + "\n" + tabSpace;
+  }
+  // kiểm tra xem trong danh sách config có ông nào start với text dưới
+  else if (
+    config.listMutipleKeyWordBreakLine.find((x) =>
+      node.value.compareStartText(x)
+    )
   ) {
-    result = "\n" + tabSpace + node.value + " ";
-  } else if (
-    config.listMutipleKeyWordBreakLine.find((x) => x.endsWith(node.value))
+    result = "\n" + tabSpace + valueBuild + " ";
+  }
+  // kiểm tra xem trong danh sách config có ông nào end với text dưới
+  else if (
+    config.listMutipleKeyWordBreakLine.find((x) => node.value.compareEndText(x))
   ) {
     _startNewLine = true;
-    result = node.value + "\n" + tabSpace;
+    result = valueBuild + "\n" + tabSpace;
   } else {
-    result = tabForNewLine + node.value + " ";
+    result = tabForNewLine + valueBuild + " ";
   }
   return result;
 }

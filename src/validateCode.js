@@ -2,6 +2,8 @@
  * File thực hiện validate code
  */
 import fs from "fs";
+import "./prototype.js";
+
 const _sourceCompare = "./output/sourceCompare.txt";
 const _formatCompare = "./output/formatCompare.txt";
 
@@ -27,5 +29,5 @@ export function validateCode(sourceCode, formattedCode) {
       throw new Error(`Error writing file: ${err}`);
     }
   });
-  return sourceCodeTrim == formatCodeTrim;
+  return sourceCodeTrim.compareText(formatCodeTrim);
 }

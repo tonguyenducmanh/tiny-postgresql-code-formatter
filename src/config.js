@@ -1,4 +1,6 @@
 export const config = {
+  // có tự động viết hoa các từ khóa trong postgreSQL không
+  usingUpperCaseKeyWord: false,
   // độ dài của 1 tab
   tabSpace: "    ",
   // danh sách các từ khóa sẽ xuống dòng và tab vào
