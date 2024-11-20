@@ -276,6 +276,7 @@ function codeGenerator(node) {
       return node.body.map(codeGenerator).join("");
 
     case enumeration.astType.semicolon:
+      return node.value;
     case enumeration.astType.keyword:
     case enumeration.astType.number:
       return node.value + " ";
