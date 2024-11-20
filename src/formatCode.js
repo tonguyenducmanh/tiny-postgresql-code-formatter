@@ -9,7 +9,7 @@ const WHITESPACE = /\s/;
 const BREAKLINE = `
 `;
 const NEWLINE = /\n/;
-const LETTERS = /^[a-z_.*%><=]+$/i;
+const LETTERS = /^[a-z_.:*%><=]+$/i;
 const TAB = config.tabSpace;
 let _currentLevel = 0;
 let _startNewLine = false;
