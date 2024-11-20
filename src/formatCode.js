@@ -238,12 +238,15 @@ function generateParser(tokens) {
       token.value === "("
     ) {
       token = tokens[++current];
-
+      let tempWalk = walk(token);
       let node = {
         type: enumeration.astType.callExpression,
-        params: [walk(token)],
       };
-
+      if (tempWalk) {
+        node.params = [tempWalk];
+      } else {
+        return node;
+      }
       while (
         token &&
         (token.type !== enumeration.tokenType.parenthesis ||
@@ -266,7 +269,7 @@ function generateParser(tokens) {
       return node;
     }
 
-    // throw new TypeError(token.type);
+    //throw new TypeError(token.type);
     // tạm thời next
     current++;
   }
@@ -346,11 +349,13 @@ function codeGenerator(node) {
     case enumeration.astType.callExpression: {
       _currentLevel++;
       _startNewLine = true;
-      let resultTemp = [
-        "(",
-        node.params.map((x) => codeGenerator(x)).join(""),
-        tabSpace + ")",
-      ].join("\n");
+      let parenthesisValue =
+        node?.params?.length > 0
+          ? node.params.map((x) => codeGenerator(x)).join("")
+          : null;
+      let resultTemp = parenthesisValue
+        ? ["(", parenthesisValue, tabSpace + ")"].join("\n")
+        : "()";
       _currentLevel--;
       result = resultTemp;
       break;
