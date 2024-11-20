@@ -6,4 +6,4 @@ demo việc format code
 
 config các keyword trong postgresql mong muốn xuống dòng
 
-![alt text](img/config.png)
+![alt text](img/configDemo.png)
