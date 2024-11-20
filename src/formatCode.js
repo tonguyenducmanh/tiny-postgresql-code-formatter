@@ -294,8 +294,14 @@ function codeGenerator(node) {
       ) {
         _startNewLine = true;
         return "\n" + tabSpace + node.value + "\n" + tabSpace;
+      } else if (["group", "order"].includes(node.value)) {
+        return "\n" + tabSpace + node.value + " ";
+      } else if (["by"].includes(node.value)) {
+        _startNewLine = true;
+        return node.value + "\n" + tabSpace;
+      } else {
+        return tabForNewLine + node.value + " ";
       }
-      return tabForNewLine + node.value + " ";
     case enumeration.astType.number:
       return tabForNewLine + node.value + " ";
     case enumeration.astType.text:

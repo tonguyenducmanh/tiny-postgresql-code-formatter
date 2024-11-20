@@ -26,6 +26,12 @@ where
                 1 
             from
                 sme.msc_user 
+            order by
+                created desc 
+            group by
+                modified 
+            having
+                total > 0 
         )
         and
             1 = 1 
