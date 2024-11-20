@@ -10,8 +10,6 @@ const _utf8 = "utf8";
 const _inputPath = "./input/input.sql"; // Change this to your input file
 const _outputPath = "./output/output.sql"; // Output file
 const _errorResultMessage = "formatted code error";
-const _errorReadFileMessage = "Đã có lỗi khi đọc file";
-const _errorWriteFileMessage = "Đã có lỗi khi viết file";
 
 /**
  * hàm chạy chính của chương trình
@@ -20,8 +18,7 @@ export function main() {
   // đọc file source
   fs.readFile(_inputPath, _utf8, (err, sourceCode) => {
     if (err) {
-      console.error(`${_errorReadFileMessage}: ${err}`);
-      return;
+      throw new Error(`Error reading file: ${err}`);
     }
 
     // Format code trong file source
@@ -35,8 +32,7 @@ export function main() {
     // lưu file kết quả+
     fs.writeFile(_outputPath, formattedCode, (err) => {
       if (err) {
-        console.error(`${_errorWriteFileMessage}: ${err}`);
-        return;
+        throw new Error(`Error writing file: ${err}`);
       }
     });
   });

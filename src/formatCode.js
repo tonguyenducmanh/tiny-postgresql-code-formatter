@@ -10,8 +10,17 @@ import { postgreSQLLanguage } from "./postgreSQLLanguage.js";
  * @returns
  */
 export function formatCode(sourceCode) {
+  if (!validateConfigPostgreSQL()) {
+    return sourceCode;
+  }
+}
+
+function validateConfigPostgreSQL() {
   if (!postgreSQLLanguage.keyword) {
     throw new Error("Not config PostGreSQL KeyWorld");
   }
-  return sourceCode;
+  if (!postgreSQLLanguage.character) {
+    throw new Error("Not config PostGreSQL Character");
+  }
+  return true;
 }
