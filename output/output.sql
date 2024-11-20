@@ -10,8 +10,7 @@ WHERE
     account_object_id IS NOT NULL 
     AND
         account_object_code = "tdmanh"
-    OR
-    (
+    OR (
         SELECT
             1 
         FROM
@@ -26,8 +25,7 @@ WHERE
     AND
         1 = 1 
 )
-OR
-    account_object_type = 1;
+OR account_object_type = 1;
 
 SELECT
     * 

@@ -14,5 +14,5 @@ export const config = {
     "drop",
   ],
   // danh sách các cụm từ khóa sẽ xuống dòng và tab vào
-  listMutipleKeyWordBreakLine: ["group by", "order by"],
+  listMutipleKeyWordBreakLine: ["group by", "order by", "left join"],
 };

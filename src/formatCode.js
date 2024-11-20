@@ -435,13 +435,8 @@ function buildKeyWordText(node, tabSpace, tabForNewLine, allNodes, index) {
   }
   let subFix = buildSubFix(allNodes, index);
 
-  // kiểm tra xem phải danh sách các từ bắt đầu xuống dòng không
-  if (config.listKeyWordBreakLine.find((x) => node.value.compareText(x))) {
-    _startNewLine = true;
-    result = "\n" + tabSpace + valueBuild + "\n" + tabSpace;
-  }
   // kiểm tra xem trong danh sách config có ông nào start với text dưới
-  else if (
+  if (
     config.listMutipleKeyWordBreakLine.find((x) =>
       node.value.compareStartText(x)
     )
@@ -454,6 +449,11 @@ function buildKeyWordText(node, tabSpace, tabForNewLine, allNodes, index) {
   ) {
     _startNewLine = true;
     result = valueBuild + "\n" + tabSpace;
+  }
+  // kiểm tra xem phải danh sách các từ bắt đầu xuống dòng không
+  else if (config.listKeyWordBreakLine.find((x) => node.value.compareText(x))) {
+    _startNewLine = true;
+    result = "\n" + tabSpace + valueBuild + "\n" + tabSpace;
   } else {
     result = tabForNewLine + valueBuild + subFix;
   }
