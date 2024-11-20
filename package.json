@@ -1,0 +1,11 @@
+{
+  "name": "tiny-code-formatter",
+  "version": "1.0.0",
+  "description": "simple and tity tool for format code, postgresql, i guess :))",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node index.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
