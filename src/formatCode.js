@@ -238,15 +238,17 @@ function generateParser(tokens) {
       token.value === "("
     ) {
       token = tokens[++current];
-      let tempWalk = walk(token);
+      // kiểm tra xem trong ngoặc có phần tử nào không
+      let firstItemInParenthesis = walk(token);
       let node = {
         type: enumeration.astType.callExpression,
       };
-      if (tempWalk) {
-        node.params = [tempWalk];
+      if (firstItemInParenthesis) {
+        node.params = [firstItemInParenthesis];
       } else {
         return node;
       }
+      // nếu trong ngoặc có phần tử thì thực hiện vòng while để quét bằng hết các phần tử
       while (
         token &&
         (token.type !== enumeration.tokenType.parenthesis ||
@@ -258,14 +260,12 @@ function generateParser(tokens) {
           node.params.push(nextWalk);
           token = tokens[current];
         } else {
-          // And return the node.
           return node;
         }
       }
 
       current++;
 
-      // And return the node.
       return node;
     }
 
@@ -321,21 +321,7 @@ function codeGenerator(node) {
       break;
     }
     case enumeration.astType.keyword: {
-      if (config.listKeyWordBreakLine.includes(node.value)) {
-        _startNewLine = true;
-        result = "\n" + tabSpace + node.value + "\n" + tabSpace;
-      } else if (
-        config.listMutipleKeyWordBreakLine.find((x) => x.startsWith(node.value))
-      ) {
-        result = "\n" + tabSpace + node.value + " ";
-      } else if (
-        config.listMutipleKeyWordBreakLine.find((x) => x.endsWith(node.value))
-      ) {
-        _startNewLine = true;
-        result = node.value + "\n" + tabSpace;
-      } else {
-        result = tabForNewLine + node.value + " ";
-      }
+      result = buildKeyWordText(node, tabSpace, tabForNewLine);
       break;
     }
     case enumeration.astType.number: {
@@ -347,22 +333,63 @@ function codeGenerator(node) {
       break;
     }
     case enumeration.astType.callExpression: {
-      _currentLevel++;
-      _startNewLine = true;
-      let parenthesisValue =
-        node?.params?.length > 0
-          ? node.params.map((x) => codeGenerator(x)).join("")
-          : null;
-      let resultTemp = parenthesisValue
-        ? ["(", parenthesisValue, tabSpace + ")"].join("\n")
-        : "()";
-      _currentLevel--;
-      result = resultTemp;
+      result = buildCallExpressionText(node, tabSpace);
       break;
     }
     default:
       throw new TypeError(node.type);
   }
   _lastRecusiveValue = result;
+  return result;
+}
+
+/**
+ * build ra đoạn text tương ứng với các text trong dấu ()
+ * @param {*} node node hiện tại trong cây ast
+ * @param {*} tabSpace khoảng cách thụt lề (so với thụt lề của dòng bên trên)
+ * @returns result
+ */
+function buildCallExpressionText(node, tabSpace) {
+  let result = null;
+  _currentLevel++;
+  _startNewLine = true;
+  // kiểm tra xem ngoặc có giá trị gì bên trong không
+  let parenthesisValue = null;
+  if (node?.params?.length > 0) {
+    parenthesisValue = node.params.map((x) => codeGenerator(x)).join("");
+  }
+  if (parenthesisValue) {
+    result = ["(", parenthesisValue, tabSpace + ")"].join("\n");
+  } else {
+    result = "()";
+  }
+  _currentLevel--;
+  return result;
+}
+
+/**
+ * build ra đoạn text tương ứng với keyword vd select
+ * @param {*} node node hiện tại trong cây ast
+ * @param {*} tabSpace khoảng cách thụt lề (so với thụt lề của dòng bên trên)
+ * @param {*} tabForNewLine khoảng cách thụt lề cho dòng mới
+ * @returns result
+ */
+function buildKeyWordText(node, tabSpace, tabForNewLine) {
+  let result = null;
+  if (config.listKeyWordBreakLine.includes(node.value)) {
+    _startNewLine = true;
+    result = "\n" + tabSpace + node.value + "\n" + tabSpace;
+  } else if (
+    config.listMutipleKeyWordBreakLine.find((x) => x.startsWith(node.value))
+  ) {
+    result = "\n" + tabSpace + node.value + " ";
+  } else if (
+    config.listMutipleKeyWordBreakLine.find((x) => x.endsWith(node.value))
+  ) {
+    _startNewLine = true;
+    result = node.value + "\n" + tabSpace;
+  } else {
+    result = tabForNewLine + node.value + " ";
+  }
   return result;
 }
