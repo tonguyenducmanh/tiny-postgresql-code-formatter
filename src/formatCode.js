@@ -287,7 +287,9 @@ function codeGenerator(node) {
     case enumeration.astType.newLine:
       return "\n";
     case enumeration.astType.callExpression:
-      return "(" + "\n" + node.params.map(codeGenerator).join("") + "\n" + ")";
+      return (
+        ["(", node.params.map(codeGenerator).join(""), ")"].join("\n") + "\n"
+      );
     default:
       throw new TypeError(node.type);
   }
