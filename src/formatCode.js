@@ -3,14 +3,14 @@
  */
 
 import { enumeration } from "./enumeration.js";
-
+import { config } from "./config.js";
 const NUMBERS = /[0-9]/;
 const WHITESPACE = /\s/;
 const BREAKLINE = `
 `;
 const NEWLINE = /\n/;
 const LETTERS = /^[a-z_.*%><=]+$/i;
-const TAB = "    ";
+const TAB = config.tabSpace;
 let _currentLevel = 0;
 let _startNewLine = false;
 /**
@@ -302,11 +302,7 @@ function codeGenerator(node) {
       _startNewLine = true;
       return node.value + "\n" + tabSpace;
     case enumeration.astType.keyword:
-      if (
-        ["select", "where", "having", "and", "or", "from", "drop"].includes(
-          node.value
-        )
-      ) {
+      if (config.listKeyWordBreakLine.includes(node.value)) {
         _startNewLine = true;
         return "\n" + tabSpace + node.value + "\n" + tabSpace;
       } else if (["group", "order"].includes(node.value)) {
