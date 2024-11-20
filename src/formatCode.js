@@ -20,7 +20,7 @@ export function formatCode(sourceCode) {
   let tokens = generateTokenizer(sourceCode);
   let ast = generateParser(tokens);
   let formattedCode = codeGenerator(ast);
-  return formattedCode;
+  return formattedCode?.trim();
 }
 
 /**
