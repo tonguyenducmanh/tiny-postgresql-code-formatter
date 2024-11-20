@@ -11,6 +11,7 @@ const BREAKLINE = `
 const NEWLINE = /\n/;
 const LETTERS = /^[a-z_.*%><=]+$/i;
 const TAB = "    ";
+let _currentLevel = 0;
 /**
  * Hàm chính để format code
  * @param {string} sourceCode: text cần format
@@ -232,9 +233,10 @@ function generateParser(tokens) {
       };
 
       while (
-        token.type !== enumeration.tokenType.parenthesis ||
-        (token.type === enumeration.tokenType.parenthesis &&
-          token.value !== ")")
+        token &&
+        (token.type !== enumeration.tokenType.parenthesis ||
+          (token.type === enumeration.tokenType.parenthesis &&
+            token.value !== ")"))
       ) {
         node.params.push(walk());
         token = tokens[current];
@@ -269,33 +271,38 @@ function generateParser(tokens) {
  * biến đổi từ tree thành code đã format
  * @param {Abstract Syntax Tree node} node
  */
-function codeGenerator(node, level = 0) {
-  let tabSpace = TAB.repeat(level);
+function codeGenerator(node) {
+  let tabSpace = _currentLevel > 0 ? TAB.repeat(_currentLevel) : "";
+  let tabSpaceSub = TAB.repeat((_currentLevel ?? 0) + 1);
   switch (node.type) {
     // node là program thì chạy toàn bộ các node con
     case enumeration.astType.program:
-      return node.body.map((x) => codeGenerator(x, 1)).join("");
+      return node.body.map((x) => codeGenerator(x)).join("");
 
     case enumeration.astType.semicolon:
       return node.value + "\n";
     case enumeration.astType.keyword:
+      return node.value + " ";
     case enumeration.astType.number:
       return node.value + " ";
     case enumeration.astType.comment:
       return node.value + "\n";
     case enumeration.astType.text:
-      return '"' + node.value + '"';
+      return '"' + node.value + '" ';
     // bỏ qua xuống dòng thừa thãi từ source code
     case enumeration.astType.newLine:
       return null;
     case enumeration.astType.callExpression:
-      return [
+      _currentLevel++;
+      let result = [
         "",
-        "(",
-        tabSpace + node.params.map((x) => codeGenerator(x, level + 1)).join(""),
-        ")",
+        tabSpace + "(",
+        tabSpaceSub + node.params.map((x) => codeGenerator(x)).join(""),
+        tabSpace + ")",
         "",
       ].join("\n");
+      _currentLevel--;
+      return result;
     default:
       throw new TypeError(node.type);
   }
