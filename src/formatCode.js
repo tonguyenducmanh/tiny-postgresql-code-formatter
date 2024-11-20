@@ -17,9 +17,10 @@ const LETTERS = /^[a-z_.*%><=]+$/i;
  * @returns
  */
 export function formatCode(sourceCode) {
-  let tokens = tokenizer(sourceCode);
-  let ast = parser(tokens);
-  return sourceCode;
+  let tokens = generateTokenizer(sourceCode);
+  let ast = generateParser(tokens);
+  let formattedCode = codeGenerator(ast);
+  return formattedCode;
 }
 
 /**
@@ -27,7 +28,7 @@ export function formatCode(sourceCode) {
  * @param {string} input sourceCode muốn bóc tách thành từng token
  * @returns danh sách token
  */
-function tokenizer(input) {
+function generateTokenizer(input) {
   // chữ cái hiện tại muốn check
   let current = 0;
 
@@ -196,7 +197,7 @@ function tokenizer(input) {
  * biến đổi các token thành Abstract Syntax Tree
  * @param {array} tokens: danh sách các token đã parse được
  */
-function parser(tokens) {
+function generateParser(tokens) {
   let current = 0;
 
   function walk() {
@@ -204,7 +205,7 @@ function parser(tokens) {
 
     if (
       [
-        ...enumeration.tokenType.number,
+        enumeration.tokenType.number,
         enumeration.tokenType.text,
         enumeration.tokenType.keyword,
         enumeration.tokenType.semicolon,
@@ -265,4 +266,34 @@ function parser(tokens) {
 
   // trả về cây phân hệ đã parse
   return ast;
+}
+
+/**
+ * biến đổi từ tree thành code đã format
+ * @param {Abstract Syntax Tree node} node
+ */
+function codeGenerator(node) {
+  switch (node.type) {
+    // node là program thì chạy toàn bộ các node con
+    case enumeration.astType.program:
+      return node.body.map(codeGenerator).join("\n");
+
+    // các trường hợp return thẳng giá trị
+    case enumeration.astType.semicolon:
+    case enumeration.astType.callExpression:
+    case enumeration.astType.keyword:
+    case enumeration.astType.number:
+      return node.value;
+
+    case enumeration.astType.text:
+      return '"' + node.value + '"';
+
+    case enumeration.astType.comment:
+      return "\n" + node.value + "\n";
+    case enumeration.astType.newLine:
+      return "\n";
+    // And if we haven't recognized the node, we'll throw an error.
+    default:
+      throw new TypeError(node.type);
+  }
 }

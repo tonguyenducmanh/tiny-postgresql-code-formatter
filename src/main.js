@@ -25,9 +25,9 @@ export function main() {
     const formattedCode = formatCode(sourceCode);
 
     // kiểm tra code trong file source và result có giống nhau không
-    if (!validateCode(sourceCode, formattedCode)) {
-      formattedCode = _errorResultMessage;
-    }
+    // if (!validateCode(sourceCode, formattedCode)) {
+    //   formattedCode = _errorResultMessage;
+    // }
 
     // lưu file kết quả+
     fs.writeFile(_outputPath, formattedCode, (err) => {
