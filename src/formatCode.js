@@ -15,8 +15,6 @@ const NEWLINE = /\n/;
 const LETTERS = /^[a-z_.:*%><=]+$/i;
 const TAB = config.tabSpace;
 let _currentLevel = 0;
-let _startNewLine = false;
-let _lastRecusiveValue = null;
 /**
  * Hàm chính để format code
  * @param {string} sourceCode: text cần format
@@ -309,14 +307,7 @@ function generateParser(tokens) {
  * @param {Abstract Syntax Tree node} node
  */
 function codeGenerator(node, index, allNodes) {
-  if (!_lastRecusiveValue) {
-    _startNewLine = true;
-  }
-  let tabSpace = _currentLevel > 0 ? TAB.repeat(_currentLevel) : "";
-  let tabForNewLine = _startNewLine ? TAB : "";
-  let tabForSemi = TAB.repeat(_currentLevel - 1 > 0 ? _currentLevel : 0);
   let result = null;
-  _startNewLine = false;
   switch (node.type) {
     // node là program thì chạy toàn bộ các node con
     case enumeration.astType.program: {
@@ -338,31 +329,29 @@ function codeGenerator(node, index, allNodes) {
       break;
     }
     case enumeration.astType.semi: {
-      _startNewLine = true;
-      result = node.value + "\n" + tabForSemi;
+      result = node.value + "\n";
       break;
     }
     case enumeration.astType.keyword: {
-      result = buildKeyWordText(node, tabSpace, tabForNewLine, allNodes, index);
+      result = buildKeyWordText(node, allNodes, index);
       break;
     }
     case enumeration.astType.number: {
       let subFix = buildSubFix(allNodes, index);
-      result = tabForNewLine + node.value + subFix;
+      result = node.value + subFix;
       break;
     }
     case enumeration.astType.text: {
-      result = tabForNewLine + '"' + node.value + '"';
+      result = '"' + node.value + '"';
       break;
     }
     case enumeration.astType.callExpression: {
-      result = buildCallExpressionText(node, tabSpace);
+      result = buildCallExpressionText(node);
       break;
     }
     default:
       throw new TypeError(node.type);
   }
-  _lastRecusiveValue = result;
   return result;
 }
 
@@ -390,13 +379,11 @@ function buildSubFix(allNodes, index) {
 /**
  * build ra đoạn text tương ứng với các text trong dấu ()
  * @param {*} node node hiện tại trong cây ast
- * @param {*} tabSpace khoảng cách thụt lề (so với thụt lề của dòng bên trên)
  * @returns result
  */
-function buildCallExpressionText(node, tabSpace) {
+function buildCallExpressionText(node) {
   let result = null;
   _currentLevel++;
-  _startNewLine = true;
   // kiểm tra xem ngoặc có giá trị gì bên trong không
   let parenthesisValue = null;
   if (node?.params?.length > 0) {
@@ -405,7 +392,7 @@ function buildCallExpressionText(node, tabSpace) {
       .join("");
   }
   if (parenthesisValue) {
-    result = ["(", parenthesisValue, tabSpace + ")"].join("\n");
+    result = ["(", parenthesisValue + ")"].join("\n");
   } else {
     result = "()";
   }
@@ -416,13 +403,11 @@ function buildCallExpressionText(node, tabSpace) {
 /**
  * build ra đoạn text tương ứng với keyword vd select
  * @param {*} node node hiện tại trong cây ast
- * @param {*} tabSpace khoảng cách thụt lề (so với thụt lề của dòng bên trên)
- * @param {*} tabForNewLine khoảng cách thụt lề cho dòng mới
  * @param {*} allNodes tất cả các node
  * @param {*} index index của node hiện tại
  * @returns result
  */
-function buildKeyWordText(node, tabSpace, tabForNewLine, allNodes, index) {
+function buildKeyWordText(node, allNodes, index) {
   let result = null;
   let valueBuild = node.value;
   // kiểm tra xem có auto viết hoa từ khóa này không
@@ -441,21 +426,19 @@ function buildKeyWordText(node, tabSpace, tabForNewLine, allNodes, index) {
       node.value.compareStartText(x)
     )
   ) {
-    result = "\n" + tabSpace + valueBuild + subFix;
+    result = "\n" + valueBuild + subFix;
   }
   // kiểm tra xem trong danh sách config có ông nào end với text dưới
   else if (
     config.listMutipleKeyWordBreakLine.find((x) => node.value.compareEndText(x))
   ) {
-    _startNewLine = true;
-    result = valueBuild + "\n" + tabSpace;
+    result = valueBuild + "\n";
   }
   // kiểm tra xem phải danh sách các từ bắt đầu xuống dòng không
   else if (config.listKeyWordBreakLine.find((x) => node.value.compareText(x))) {
-    _startNewLine = true;
-    result = "\n" + tabSpace + valueBuild + "\n" + tabSpace;
+    result = "\n" + valueBuild + "\n";
   } else {
-    result = tabForNewLine + valueBuild + subFix;
+    result = valueBuild + subFix;
   }
   return result;
 }
