@@ -37,9 +37,7 @@ export function formatCode(sourceCode) {
 function transformAfterFormat(formattedCode) {
   // cắt đầu cuối, xóa dòng bị trống (ngoại trừ việc kết thúc dòng trên bằng ;)
   return formattedCode
-    ?.replaceAll(" ;", ";")
-    .replaceAll(" ,", ",")
-    .replace(/^\s*[\r\n]/gm, "")
+    ?.replace(/^\s*[\r\n]/gm, "")
     .replace(/;/g, ";\n")
     .trim();
 }
