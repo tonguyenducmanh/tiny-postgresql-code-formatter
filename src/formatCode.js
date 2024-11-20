@@ -8,12 +8,6 @@ import { generateParser } from "./generateParser.js";
 import { generateTokenizer } from "./generateTokenizer.js";
 import { codeGenerator } from "./codeGenerator.js";
 
-export const NUMBERS = /[0-9]/;
-export const WHITESPACE = /\s/;
-export const BREAKLINE = `
-`;
-export const NEWLINE = /\n/;
-export const LETTERS = /^[a-z_.:*%><=]+$/i;
 const TAB = config.tabSpace;
 /**
  * Hàm chính để format code

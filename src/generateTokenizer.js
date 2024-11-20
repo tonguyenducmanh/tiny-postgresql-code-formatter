@@ -1,6 +1,11 @@
-import { enumeration } from "./enumeration";
-import { BREAKLINE, NEWLINE, WHITESPACE, NUMBERS, LETTERS } from "./formatCode";
+import { enumeration } from "./enumeration.js";
 
+const NUMBERS = /[0-9]/;
+const WHITESPACE = /\s/;
+const BREAKLINE = `
+`;
+const NEWLINE = /\n/;
+const LETTERS = /^[a-z_.:*%><=]+$/i;
 /**
  * Bóc tách code thành từng token
  * @param {string} input sourceCode muốn bóc tách thành từng token

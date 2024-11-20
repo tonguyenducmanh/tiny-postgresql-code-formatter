@@ -1,6 +1,6 @@
-import { config } from "./config";
-import { enumeration } from "./enumeration";
-import { postgreSQLKeyword } from "./postgreSQLKeyword";
+import { config } from "./config.js";
+import { enumeration } from "./enumeration.js";
+import { postgreSQLKeyword } from "./postgreSQLKeyword.js";
 
 let _currentLevel = 0;
 /**
