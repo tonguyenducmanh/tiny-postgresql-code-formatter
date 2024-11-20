@@ -280,13 +280,11 @@ function codeGenerator(node) {
       return node.body.map((x) => codeGenerator(x)).join("");
 
     case enumeration.astType.semicolon:
-      return node.value + "\n";
-    case enumeration.astType.keyword:
-      return node.value + " ";
-    case enumeration.astType.number:
-      return node.value + " ";
     case enumeration.astType.comment:
       return node.value + "\n";
+    case enumeration.astType.keyword:
+    case enumeration.astType.number:
+      return node.value + " ";
     case enumeration.astType.text:
       return '"' + node.value + '" ';
     // bỏ qua xuống dòng thừa thãi từ source code
