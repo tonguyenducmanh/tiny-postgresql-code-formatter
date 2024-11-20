@@ -338,7 +338,7 @@ function codeGenerator(node, index, allNodes) {
     }
     case enumeration.astType.semi: {
       _startNewLine = true;
-      result = node.value + "\n" + tabSpace;
+      result = node.value + "\n" + tabForNewLine;
       break;
     }
     case enumeration.astType.keyword: {
