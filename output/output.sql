@@ -26,7 +26,7 @@ where
         group by
             modified 
         having
-            total > 0 
+            total >= 0 
     )
     and
         1 = 1 
