@@ -8,13 +8,11 @@ select
 from
     sme.account_object 
 where
-
 (
     account_object_id is not null 
     and
         account_object_code = "tdmanh" 
     or
-    
     (
 
         select
@@ -22,7 +20,6 @@ where
         from
             sme.account 
         where
-        
         (
 
             select

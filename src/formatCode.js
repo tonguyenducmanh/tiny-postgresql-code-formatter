@@ -304,8 +304,7 @@ function codeGenerator(node) {
       _currentLevel++;
       _startNewLine = true;
       let result = [
-        "",
-        tabSpace + "(",
+        "(",
         node.params.map((x) => codeGenerator(x)).join(""),
         tabSpace + ")",
       ].join("\n");
