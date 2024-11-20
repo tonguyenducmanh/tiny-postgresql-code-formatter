@@ -2,13 +2,23 @@ import { config } from "./config.js";
 import { enumeration } from "./enumeration.js";
 import { postgreSQLKeyword } from "./postgreSQLKeyword.js";
 
+const TAB = config.tabSpace;
 let _currentLevel = 0;
+let _startNewLine = false;
+let _lastRecusiveValue = null;
 /**
  * biến đổi từ tree thành code đã format
  * @param {Abstract Syntax Tree node} node
  */
 export function codeGenerator(node, index, allNodes) {
+  if (!_lastRecusiveValue) {
+    _startNewLine = true;
+  }
+  let tabSpace = _currentLevel > 0 ? TAB.repeat(_currentLevel) : "";
+  let tabForNewLine = _startNewLine ? TAB : "";
+  let tabForSemi = TAB.repeat(_currentLevel - 1 > 0 ? _currentLevel : 0);
   let result = null;
+  _startNewLine = false;
   switch (node.type) {
     // node là program thì chạy toàn bộ các node con
     case enumeration.astType.program: {
@@ -30,31 +40,34 @@ export function codeGenerator(node, index, allNodes) {
       break;
     }
     case enumeration.astType.semi: {
-      result = node.value + "\n";
+      _startNewLine = true;
+      result = node.value + "\n" + tabForSemi;
       break;
     }
     case enumeration.astType.keyword: {
-      result = buildKeyWordText(node, allNodes, index);
+      result = buildKeyWordText(node, tabSpace, tabForNewLine, allNodes, index);
       break;
     }
     case enumeration.astType.number: {
       let subFix = buildSubFix(allNodes, index);
-      result = node.value + subFix;
+      result = tabForNewLine + node.value + subFix;
       break;
     }
     case enumeration.astType.text: {
-      result = '"' + node.value + '"';
+      result = tabForNewLine + '"' + node.value + '"';
       break;
     }
     case enumeration.astType.callExpression: {
-      result = buildCallExpressionText(node);
+      result = buildCallExpressionText(node, tabSpace);
       break;
     }
     default:
       throw new TypeError(node.type);
   }
+  _lastRecusiveValue = result;
   return result;
 }
+
 /**
  * kiểm tra và build ra hậu tố cho text hiện tại
  * @param {*} allNodes tất cả các node
@@ -75,14 +88,17 @@ function buildSubFix(allNodes, index) {
   }
   return subFix;
 }
+
 /**
  * build ra đoạn text tương ứng với các text trong dấu ()
  * @param {*} node node hiện tại trong cây ast
+ * @param {*} tabSpace khoảng cách thụt lề (so với thụt lề của dòng bên trên)
  * @returns result
  */
-function buildCallExpressionText(node) {
+function buildCallExpressionText(node, tabSpace) {
   let result = null;
   _currentLevel++;
+  _startNewLine = true;
   // kiểm tra xem ngoặc có giá trị gì bên trong không
   let parenthesisValue = null;
   if (node?.params?.length > 0) {
@@ -91,21 +107,24 @@ function buildCallExpressionText(node) {
       .join("");
   }
   if (parenthesisValue) {
-    result = ["(", parenthesisValue + ")"].join("\n");
+    result = ["(", parenthesisValue, tabSpace + ")"].join("\n");
   } else {
     result = "()";
   }
   _currentLevel--;
   return result;
 }
+
 /**
  * build ra đoạn text tương ứng với keyword vd select
  * @param {*} node node hiện tại trong cây ast
+ * @param {*} tabSpace khoảng cách thụt lề (so với thụt lề của dòng bên trên)
+ * @param {*} tabForNewLine khoảng cách thụt lề cho dòng mới
  * @param {*} allNodes tất cả các node
  * @param {*} index index của node hiện tại
  * @returns result
  */
-function buildKeyWordText(node, allNodes, index) {
+function buildKeyWordText(node, tabSpace, tabForNewLine, allNodes, index) {
   let result = null;
   let valueBuild = node.value;
   // kiểm tra xem có auto viết hoa từ khóa này không
@@ -124,21 +143,21 @@ function buildKeyWordText(node, allNodes, index) {
       node.value.compareStartText(x)
     )
   ) {
-    result = "\n" + valueBuild + subFix;
+    result = "\n" + tabSpace + valueBuild + subFix;
   }
-
   // kiểm tra xem trong danh sách config có ông nào end với text dưới
   else if (
     config.listMutipleKeyWordBreakLine.find((x) => node.value.compareEndText(x))
   ) {
-    result = valueBuild + "\n";
+    _startNewLine = true;
+    result = valueBuild + "\n" + tabSpace;
   }
-
   // kiểm tra xem phải danh sách các từ bắt đầu xuống dòng không
   else if (config.listKeyWordBreakLine.find((x) => node.value.compareText(x))) {
-    result = "\n" + valueBuild + "\n";
+    _startNewLine = true;
+    result = "\n" + tabSpace + valueBuild + "\n" + tabSpace;
   } else {
-    result = valueBuild + subFix;
+    result = tabForNewLine + valueBuild + subFix;
   }
   return result;
 }
