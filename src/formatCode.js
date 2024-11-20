@@ -10,7 +10,7 @@ const BREAKLINE = `
 `;
 const NEWLINE = /\n/;
 const LETTERS = /^[a-z_.*%><=]+$/i;
-
+const TAB = "    ";
 /**
  * Hàm chính để format code
  * @param {string} sourceCode: text cần format
@@ -269,11 +269,12 @@ function generateParser(tokens) {
  * biến đổi từ tree thành code đã format
  * @param {Abstract Syntax Tree node} node
  */
-function codeGenerator(node) {
+function codeGenerator(node, level = 0) {
+  let tabSpace = TAB.repeat(level);
   switch (node.type) {
     // node là program thì chạy toàn bộ các node con
     case enumeration.astType.program:
-      return node.body.map(codeGenerator).join("");
+      return node.body.map((x) => codeGenerator(x, 1)).join("");
 
     case enumeration.astType.semicolon:
       return node.value + "\n";
@@ -288,9 +289,13 @@ function codeGenerator(node) {
     case enumeration.astType.newLine:
       return null;
     case enumeration.astType.callExpression:
-      return ["", "(", node.params.map(codeGenerator).join(""), ")", ""].join(
-        "\n"
-      );
+      return [
+        "",
+        "(",
+        tabSpace + node.params.map((x) => codeGenerator(x, level + 1)).join(""),
+        ")",
+        "",
+      ].join("\n");
     default:
       throw new TypeError(node.type);
   }
