@@ -35,7 +35,12 @@ export function formatCode(sourceCode) {
  * @returns
  */
 function transformAfterFormat(formattedCode) {
-  return formattedCode?.trim().replaceAll(" ;", ";").replaceAll(" ,", ",");
+  // cắt đầu cuối, xóa dòng bị trống
+  return formattedCode
+    ?.trim()
+    .replaceAll(" ;", ";")
+    .replaceAll(" ,", ",")
+    .replace(/^\s*[\r\n]/gm, "");
 }
 
 /**

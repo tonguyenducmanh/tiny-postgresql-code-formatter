@@ -1,8 +1,4 @@
--- sample code comment
-/*
-* sample row code comment
-*/
-
+-- sample code comment/** sample row code comment*/
 SELECT
     acount_object_id,
     account_object_code,
@@ -16,7 +12,6 @@ WHERE
         account_object_code = "tdmanh"
     OR
     (
-
         SELECT
             1 
         FROM
@@ -33,7 +28,6 @@ WHERE
 )
 OR
     account_object_type = 1;
-
 SELECT
     * 
 FROM
