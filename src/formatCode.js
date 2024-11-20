@@ -314,7 +314,7 @@ function codeGenerator(node, index, allNodes) {
   }
   let tabSpace = _currentLevel > 0 ? TAB.repeat(_currentLevel) : "";
   let tabForNewLine = _startNewLine ? TAB : "";
-  let tabForSemi = TAB.repeat(_currentLevel - 1 > 0 ?? 0);
+  let tabForSemi = TAB.repeat(_currentLevel - 1 > 0 ? _currentLevel : 0);
   let result = null;
   _startNewLine = false;
   switch (node.type) {
