@@ -314,6 +314,7 @@ function codeGenerator(node, index, allNodes) {
   }
   let tabSpace = _currentLevel > 0 ? TAB.repeat(_currentLevel) : "";
   let tabForNewLine = _startNewLine ? TAB : "";
+  let tabForSemi = TAB.repeat(_currentLevel - 1 > 0 ?? 0);
   let result = null;
   _startNewLine = false;
   switch (node.type) {
@@ -338,7 +339,7 @@ function codeGenerator(node, index, allNodes) {
     }
     case enumeration.astType.semi: {
       _startNewLine = true;
-      result = node.value + "\n" + tabForNewLine;
+      result = node.value + "\n" + tabForSemi;
       break;
     }
     case enumeration.astType.keyword: {
