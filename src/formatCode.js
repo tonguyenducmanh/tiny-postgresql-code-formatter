@@ -69,6 +69,15 @@ function generateTokenizer(input) {
       continue;
     }
 
+    if (char === ",") {
+      tokens.push({
+        type: enumeration.tokenType.semi,
+        value: char,
+      });
+      current++;
+      continue;
+    }
+
     // lọc ra comment theo dòng --
     if (char === "-") {
       // kiểm tra ký tự tiếp theo phải - không, có thì lọc tất cả đến khi ra ký tự xuống dòng
@@ -211,6 +220,7 @@ function generateParser(tokens) {
         enumeration.tokenType.text,
         enumeration.tokenType.keyword,
         enumeration.tokenType.semicolon,
+        enumeration.tokenType.semi,
         enumeration.tokenType.newLine,
         enumeration.tokenType.comment,
       ].includes(token.type)
@@ -288,6 +298,9 @@ function codeGenerator(node) {
     case enumeration.astType.semicolon:
     case enumeration.astType.comment:
       return node.value + "\n";
+    case enumeration.astType.semi:
+      _startNewLine = true;
+      return node.value + "\n" + tabSpace;
     case enumeration.astType.keyword:
       if (
         ["select", "where", "having", "and", "or", "from"].includes(node.value)

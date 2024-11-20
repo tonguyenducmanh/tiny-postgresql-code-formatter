@@ -7,6 +7,8 @@ export const enumeration = {
     keyword: "keyword",
     // dấu chấm phẩy ;
     semicolon: "semicolon",
+    // dấu phẩy ,
+    semi: "semi",
     // bình luận trong code
     comment: "comment",
     // xuống dòng
@@ -25,6 +27,8 @@ export const enumeration = {
     keyword: "keyword",
     // dấu chấm phẩy ;
     semicolon: "semicolon",
+    // dấu phẩy ,
+    semi: "semi",
     // bình luận trong code
     comment: "comment",
     // xuống dòng

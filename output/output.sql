@@ -4,7 +4,9 @@
 */
 
 select
-    * 
+    acount_object_id ,
+    account_object_code ,
+    account_object_name 
 from
     sme.account_object 
 where
