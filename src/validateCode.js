@@ -9,5 +9,8 @@
  * @returns kết quả validate
  */
 export function validateCode(sourceCode, formattedCode) {
-  return true;
+  // lọc hết khoảng cách giữa các chữ và xuống dòng đi
+  let sourceCodeTrim = sourceCode.replace(/\s+/g, "");
+  let formatCodeTrim = formattedCode.replace(/\s+/g, "");
+  return sourceCodeTrim == formatCodeTrim;
 }

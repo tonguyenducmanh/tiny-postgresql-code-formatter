@@ -18,17 +18,17 @@ const _errorWriteFileMessage = "Đã có lỗi khi viết file";
  */
 export function main() {
   // đọc file source
-  fs.readFile(_inputPath, _utf8, (err, code) => {
+  fs.readFile(_inputPath, _utf8, (err, sourceCode) => {
     if (err) {
       console.error(`${_errorReadFileMessage}: ${err}`);
       return;
     }
 
     // Format code trong file source
-    const formattedCode = formatCode(code);
+    const formattedCode = formatCode(sourceCode);
 
     // kiểm tra code trong file source và result có giống nhau không
-    if (!validateCode(code, formatCode)) {
+    if (!validateCode(sourceCode, formattedCode)) {
       formattedCode = _errorResultMessage;
     }
 
