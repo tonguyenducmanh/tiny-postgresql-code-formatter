@@ -20,24 +20,16 @@ where
         select
             1 
         from
-            sme.account 
-        where
-        (
-
-            select
-                1 
-            from
-                sme.msc_user 
-            order by
-                created desc 
-            group by
-                modified 
-            having
-                total > 0 
-        )
-        and
-            1 = 1 
+            sme.msc_user 
+        order by
+            created desc 
+        group by
+            modified 
+        having
+            total > 0 
     )
+    and
+        1 = 1 
 )
 or
     account_object_type = 1 ;
