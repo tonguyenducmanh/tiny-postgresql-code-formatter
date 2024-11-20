@@ -305,9 +305,13 @@ function codeGenerator(node) {
       if (config.listKeyWordBreakLine.includes(node.value)) {
         _startNewLine = true;
         return "\n" + tabSpace + node.value + "\n" + tabSpace;
-      } else if (["group", "order"].includes(node.value)) {
+      } else if (
+        config.listMutipleKeyWordBreakLine.find((x) => x.startsWith(node.value))
+      ) {
         return "\n" + tabSpace + node.value + " ";
-      } else if (["by"].includes(node.value)) {
+      } else if (
+        config.listMutipleKeyWordBreakLine.find((x) => x.endsWith(node.value))
+      ) {
         _startNewLine = true;
         return node.value + "\n" + tabSpace;
       } else {
