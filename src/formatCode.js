@@ -26,7 +26,16 @@ export function formatCode(sourceCode) {
   let tokens = generateTokenizer(sourceCode);
   let ast = generateParser(tokens);
   let formattedCode = codeGenerator(ast);
-  return formattedCode?.trim();
+  return transformAfterFormat(formattedCode);
+}
+
+/**
+ * 1 số xử lý không muốn dùng trong hàm codeGenerator tránh đệ quy
+ * @param {string} formattedCode
+ * @returns
+ */
+function transformAfterFormat(formattedCode) {
+  return formattedCode?.trim().replaceAll(" ;", ";").replaceAll(" ,", ",");
 }
 
 /**
@@ -296,6 +305,9 @@ function generateParser(tokens) {
  * @param {Abstract Syntax Tree node} node
  */
 function codeGenerator(node) {
+  if (!_lastRecusiveValue) {
+    _startNewLine = true;
+  }
   let tabSpace = _currentLevel > 0 ? TAB.repeat(_currentLevel) : "";
   let tabForNewLine = _startNewLine ? TAB : "";
   let result = null;
