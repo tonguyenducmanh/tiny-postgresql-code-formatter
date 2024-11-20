@@ -228,8 +228,7 @@ function generateParser(tokens) {
 
       let node = {
         type: enumeration.astType.callExpression,
-        name: token.value,
-        params: [],
+        params: [walk(token)],
       };
 
       token = tokens[++current];
@@ -276,23 +275,21 @@ function codeGenerator(node) {
   switch (node.type) {
     // node là program thì chạy toàn bộ các node con
     case enumeration.astType.program:
-      return node.body.map(codeGenerator).join("\n");
+      return node.body.map(codeGenerator).join("");
 
-    // các trường hợp return thẳng giá trị
     case enumeration.astType.semicolon:
-    case enumeration.astType.callExpression:
     case enumeration.astType.keyword:
     case enumeration.astType.number:
-      return node.value;
+      return node.value + " ";
+    case enumeration.astType.comment:
+      return node.value + "\n";
 
     case enumeration.astType.text:
       return '"' + node.value + '"';
-
-    case enumeration.astType.comment:
-      return "\n" + node.value + "\n";
     case enumeration.astType.newLine:
       return "\n";
-    // And if we haven't recognized the node, we'll throw an error.
+    case enumeration.astType.callExpression:
+      return "(" + "\n" + node.params.map(codeGenerator).join("") + "\n" + ")";
     default:
       throw new TypeError(node.type);
   }
