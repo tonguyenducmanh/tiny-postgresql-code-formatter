@@ -308,7 +308,7 @@ function generateParser(tokens) {
  * biến đổi từ tree thành code đã format
  * @param {Abstract Syntax Tree node} node
  */
-function codeGenerator(node) {
+function codeGenerator(node, index, allNodes) {
   if (!_lastRecusiveValue) {
     _startNewLine = true;
   }
@@ -319,7 +319,9 @@ function codeGenerator(node) {
   switch (node.type) {
     // node là program thì chạy toàn bộ các node con
     case enumeration.astType.program: {
-      let allValues = node.body.map((x) => codeGenerator(x));
+      let allValues = node.body.map((x, index, arr) =>
+        codeGenerator(x, index, arr)
+      );
       result = allValues.join("");
       break;
     }
@@ -340,11 +342,12 @@ function codeGenerator(node) {
       break;
     }
     case enumeration.astType.keyword: {
-      result = buildKeyWordText(node, tabSpace, tabForNewLine);
+      result = buildKeyWordText(node, tabSpace, tabForNewLine, allNodes, index);
       break;
     }
     case enumeration.astType.number: {
-      result = tabForNewLine + node.value + " ";
+      let subFix = buildSubFix(allNodes, index);
+      result = tabForNewLine + node.value + subFix;
       break;
     }
     case enumeration.astType.text: {
@@ -363,6 +366,27 @@ function codeGenerator(node) {
 }
 
 /**
+ * kiểm tra và build ra hậu tố cho text hiện tại
+ * @param {*} allNodes tất cả các node
+ * @param {*} index index của node hiện tại
+ * @returns subfix
+ */
+function buildSubFix(allNodes, index) {
+  let subFix = " ";
+  if (allNodes?.length > 0 && index + 1 < allNodes.length) {
+    let nextNode = allNodes[index + 1];
+    // nếu node tiếp theo là dấu ; hoặc , thì không build subfix
+    if (
+      nextNode.type == enumeration.astType.semi ||
+      nextNode.type == enumeration.astType.semicolon
+    ) {
+      subFix = "";
+    }
+  }
+  return subFix;
+}
+
+/**
  * build ra đoạn text tương ứng với các text trong dấu ()
  * @param {*} node node hiện tại trong cây ast
  * @param {*} tabSpace khoảng cách thụt lề (so với thụt lề của dòng bên trên)
@@ -375,7 +399,9 @@ function buildCallExpressionText(node, tabSpace) {
   // kiểm tra xem ngoặc có giá trị gì bên trong không
   let parenthesisValue = null;
   if (node?.params?.length > 0) {
-    parenthesisValue = node.params.map((x) => codeGenerator(x)).join("");
+    parenthesisValue = node.params
+      .map((x, index, arr) => codeGenerator(x, index, arr))
+      .join("");
   }
   if (parenthesisValue) {
     result = ["(", parenthesisValue, tabSpace + ")"].join("\n");
@@ -391,9 +417,11 @@ function buildCallExpressionText(node, tabSpace) {
  * @param {*} node node hiện tại trong cây ast
  * @param {*} tabSpace khoảng cách thụt lề (so với thụt lề của dòng bên trên)
  * @param {*} tabForNewLine khoảng cách thụt lề cho dòng mới
+ * @param {*} allNodes tất cả các node
+ * @param {*} index index của node hiện tại
  * @returns result
  */
-function buildKeyWordText(node, tabSpace, tabForNewLine) {
+function buildKeyWordText(node, tabSpace, tabForNewLine, allNodes, index) {
   let result = null;
   let valueBuild = node.value;
   // kiểm tra xem có auto viết hoa từ khóa này không
@@ -404,6 +432,7 @@ function buildKeyWordText(node, tabSpace, tabForNewLine) {
       valueBuild = node.value.toLowerCase();
     }
   }
+  let subFix = buildSubFix(allNodes, index);
 
   // kiểm tra xem phải danh sách các từ bắt đầu xuống dòng không
   if (config.listKeyWordBreakLine.find((x) => node.value.compareText(x))) {
@@ -416,7 +445,7 @@ function buildKeyWordText(node, tabSpace, tabForNewLine) {
       node.value.compareStartText(x)
     )
   ) {
-    result = "\n" + tabSpace + valueBuild + " ";
+    result = "\n" + tabSpace + valueBuild + subFix;
   }
   // kiểm tra xem trong danh sách config có ông nào end với text dưới
   else if (
@@ -425,7 +454,7 @@ function buildKeyWordText(node, tabSpace, tabForNewLine) {
     _startNewLine = true;
     result = valueBuild + "\n" + tabSpace;
   } else {
-    result = tabForNewLine + valueBuild + " ";
+    result = tabForNewLine + valueBuild + subFix;
   }
   return result;
 }
