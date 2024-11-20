@@ -231,8 +231,6 @@ function generateParser(tokens) {
         params: [walk(token)],
       };
 
-      token = tokens[++current];
-
       while (
         token.type !== enumeration.tokenType.parenthesis ||
         (token.type === enumeration.tokenType.parenthesis &&

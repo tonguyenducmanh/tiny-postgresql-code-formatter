@@ -22,12 +22,12 @@ export function main() {
     }
 
     // Format code trong file source
-    const formattedCode = formatCode(sourceCode);
+    let formattedCode = formatCode(sourceCode);
 
     // kiểm tra code trong file source và result có giống nhau không
-    // if (!validateCode(sourceCode, formattedCode)) {
-    //   formattedCode = _errorResultMessage;
-    // }
+    if (!validateCode(sourceCode, formattedCode)) {
+      formattedCode = _errorResultMessage;
+    }
 
     // lưu file kết quả+
     fs.writeFile(_outputPath, formattedCode, (err) => {
