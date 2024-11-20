@@ -299,7 +299,7 @@ function codeGenerator(node) {
     case enumeration.astType.number:
       return tabForNewLine + node.value + " ";
     case enumeration.astType.text:
-      return tabForNewLine + '"' + node.value + '" ';
+      return tabForNewLine + '"' + node.value + '"';
     case enumeration.astType.callExpression:
       _currentLevel++;
       _startNewLine = true;

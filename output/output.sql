@@ -11,7 +11,7 @@ where
 (
     account_object_id is not null 
     and
-        account_object_code = "tdmanh" 
+        account_object_code = "tdmanh"
     or
     (
 
