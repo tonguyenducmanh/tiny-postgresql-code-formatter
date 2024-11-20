@@ -35,12 +35,13 @@ export function formatCode(sourceCode) {
  * @returns
  */
 function transformAfterFormat(formattedCode) {
-  // cắt đầu cuối, xóa dòng bị trống
+  // cắt đầu cuối, xóa dòng bị trống (ngoại trừ việc kết thúc dòng trên bằng ;)
   return formattedCode
-    ?.trim()
-    .replaceAll(" ;", ";")
+    ?.replaceAll(" ;", ";")
     .replaceAll(" ,", ",")
-    .replace(/^\s*[\r\n]/gm, "");
+    .replace(/^\s*[\r\n]/gm, "")
+    .replace(/;/g, ";\n")
+    .trim();
 }
 
 /**

@@ -28,6 +28,7 @@ WHERE
 )
 OR
     account_object_type = 1;
+
 SELECT
     * 
 FROM
