@@ -66,10 +66,13 @@ String.prototype.compareText =
 String.prototype.compareStartText =
   String.prototype.compareStartText ||
   function (value) {
+    // kiểm tra nếu bắt đầu chứa text cần check
+    // và length phải lớn hơn text cần check
     return (
       arguments &&
       arguments[0] &&
-      value.trim().toLowerCase().startsWith(this.trim().toLowerCase())
+      value.trim().toLowerCase().startsWith(this.trim().toLowerCase()) &&
+      value.trim().length > this.trim()
     );
   };
 
@@ -79,9 +82,12 @@ String.prototype.compareStartText =
 String.prototype.compareEndText =
   String.prototype.compareEndText ||
   function (value) {
+    // kiểm tra nếu kết thúc chứa text cần check
+    // và length phải lớn hơn text cần check
     return (
       arguments &&
       arguments[0] &&
-      value.trim().toLowerCase().endsWith(this.trim().toLowerCase())
+      value.trim().toLowerCase().endsWith(this.trim().toLowerCase()) &&
+      value.trim().length > this.trim()
     );
   };
