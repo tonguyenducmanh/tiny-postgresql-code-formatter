@@ -128,11 +128,11 @@ function buildKeyWordText(node, tabSpace, tabForNewLine, allNodes, index) {
   let result = null;
   let valueBuild = node.value;
   // kiểm tra xem có auto viết hoa từ khóa này không
-  if (postgreSQLKeyword.find((x) => node.value.compareText(x))) {
+  if (postgreSQLKeyword.find((x) => valueBuild.compareText(x))) {
     if (config?.usingUpperCaseKeyWord) {
-      valueBuild = node.value.toUpperCase();
+      valueBuild = valueBuild.toUpperCase();
     } else {
-      valueBuild = node.value.toLowerCase();
+      valueBuild = valueBuild.toLowerCase();
     }
   }
   let subFix = buildSubFix(allNodes, index);
@@ -140,20 +140,20 @@ function buildKeyWordText(node, tabSpace, tabForNewLine, allNodes, index) {
   // kiểm tra xem trong danh sách config có ông nào start với text dưới
   if (
     config.listMutipleKeyWordBreakLine.find((x) =>
-      node.value.compareStartText(x)
+      valueBuild.compareStartText(x)
     )
   ) {
     result = "\n" + tabSpace + valueBuild + subFix;
   }
   // kiểm tra xem trong danh sách config có ông nào end với text dưới
   else if (
-    config.listMutipleKeyWordBreakLine.find((x) => node.value.compareEndText(x))
+    config.listMutipleKeyWordBreakLine.find((x) => valueBuild.compareEndText(x))
   ) {
     _startNewLine = true;
     result = valueBuild + "\n" + tabSpace;
   }
   // kiểm tra xem phải danh sách các từ bắt đầu xuống dòng không
-  else if (config.listKeyWordBreakLine.find((x) => node.value.compareText(x))) {
+  else if (config.listKeyWordBreakLine.find((x) => valueBuild.compareText(x))) {
     _startNewLine = true;
     result = "\n" + tabSpace + valueBuild + "\n" + tabSpace;
   } else {
