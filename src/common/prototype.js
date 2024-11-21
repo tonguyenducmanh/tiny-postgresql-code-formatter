@@ -72,7 +72,7 @@ String.prototype.compareStartText =
       arguments &&
       arguments[0] &&
       value.trim().toLowerCase().startsWith(this.trim().toLowerCase()) &&
-      value.trim().length > this.trim()
+      value.trim().length > this.trim().length
     );
   };
 
@@ -88,6 +88,6 @@ String.prototype.compareEndText =
       arguments &&
       arguments[0] &&
       value.trim().toLowerCase().endsWith(this.trim().toLowerCase()) &&
-      value.trim().length > this.trim()
+      value.trim().length > this.trim().length
     );
   };
