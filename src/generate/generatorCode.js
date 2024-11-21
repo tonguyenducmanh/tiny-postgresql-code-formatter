@@ -137,25 +137,20 @@ function buildKeyWordText(node, tabSpace, tabForNewLine, allNodes, index) {
   }
   let subFix = buildSubFix(allNodes, index);
 
-  // kiểm tra xem trong danh sách config có ông nào start với text dưới
-  if (
+  if (config.listKeyWordBreakLine.find((x) => valueBuild.compareText(x))) {
+    _startNewLine = true;
+    result = "\n" + tabSpace + valueBuild + "\n" + tabSpace;
+  } else if (
     config.listMutipleKeyWordBreakLine.find((x) =>
       valueBuild.compareStartText(x)
     )
   ) {
     result = "\n" + tabSpace + valueBuild + subFix;
-  }
-  // kiểm tra xem trong danh sách config có ông nào end với text dưới
-  else if (
+  } else if (
     config.listMutipleKeyWordBreakLine.find((x) => valueBuild.compareEndText(x))
   ) {
     _startNewLine = true;
     result = valueBuild + "\n" + tabSpace;
-  }
-  // kiểm tra xem phải danh sách các từ bắt đầu xuống dòng không
-  else if (config.listKeyWordBreakLine.find((x) => valueBuild.compareText(x))) {
-    _startNewLine = true;
-    result = "\n" + tabSpace + valueBuild + "\n" + tabSpace;
   } else {
     result = tabForNewLine + valueBuild + subFix;
   }
