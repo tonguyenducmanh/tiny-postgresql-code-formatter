@@ -15,7 +15,11 @@ WHERE
         SELECT
             1 
         FROM
-            sme.msc_user mu2 ORDER BY created DESC GROUP BY modified 
+            sme.msc_user mu2 
+        ORDER BY
+            created DESC 
+        GROUP BY
+            modified 
         HAVING
             total >= 0 
     )
