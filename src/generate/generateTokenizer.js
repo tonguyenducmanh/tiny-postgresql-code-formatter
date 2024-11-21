@@ -5,7 +5,7 @@ const WHITESPACE = /\s/;
 const BREAKLINE = `
 `;
 const NEWLINE = /\n/;
-const LETTERS = /^[a-z_.:*%><=]+$/i;
+const LETTERSCONTAINNUM = /^[a-z_.:*%><=0-9]+$/i;
 /**
  * Bóc tách code thành từng token
  * @param {string} input sourceCode muốn bóc tách thành từng token
@@ -162,11 +162,12 @@ export function generateTokenizer(input) {
     }
 
     // lọc ra các ký tự keyword trong ngôn ngữ lập trình, vd select, where
-    if (LETTERS.test(char)) {
+    // 1 số alias table như svd2 svd3 thì vẫn coi là keyword
+    if (LETTERSCONTAINNUM.test(char)) {
       let value = "";
 
       // lọc hết, do đã bỏ qua văn bản và số, các ký tự đặc biệt bên trên rồi
-      while (LETTERS.test(char)) {
+      while (LETTERSCONTAINNUM.test(char)) {
         value += char;
         char = input[++current];
       }
