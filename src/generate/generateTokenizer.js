@@ -1,4 +1,4 @@
-import { enumeration } from "./enumeration.js";
+import { enumeration } from "../common/enumeration.js";
 
 const NUMBERS = /[0-9]/;
 const WHITESPACE = /\s/;

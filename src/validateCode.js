@@ -2,7 +2,7 @@
  * File thực hiện validate code
  */
 import fs from "fs";
-import "./prototype.js";
+import "./common/prototype.js";
 
 const _sourceCompare = "./output/sourceCompare.txt";
 const _formatCompare = "./output/formatCompare.txt";

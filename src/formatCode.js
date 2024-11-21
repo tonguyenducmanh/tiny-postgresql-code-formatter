@@ -2,11 +2,11 @@
  * file thực hiện nghiệp vụ format code
  */
 
-import { config } from "./config.js";
-import "./prototype.js";
-import { generateParser } from "./generateParser.js";
-import { generateTokenizer } from "./generateTokenizer.js";
-import { codeGenerator } from "./codeGenerator.js";
+import { config } from "../config/config.js";
+import "./common/prototype.js";
+import { generateParser } from "./generate/generateParser.js";
+import { generateTokenizer } from "./generate/generateTokenizer.js";
+import { codeGenerator } from "./generate/generatorCode.js";
 
 const TAB = config.tabSpace;
 /**

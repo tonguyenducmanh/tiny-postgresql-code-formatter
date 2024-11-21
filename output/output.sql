@@ -1,4 +1,7 @@
--- sample code comment/** sample row code comment*/
+-- sample code comment
+/*
+* sample row code comment
+*/
 SELECT
     acount_object_id,
     account_object_code,

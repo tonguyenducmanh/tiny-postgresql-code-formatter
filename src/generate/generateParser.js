@@ -1,4 +1,4 @@
-import { enumeration } from "./enumeration.js";
+import { enumeration } from "../common/enumeration.js";
 
 /**
  * biến đổi các token thành Abstract Syntax Tree

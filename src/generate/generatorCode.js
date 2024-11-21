@@ -1,6 +1,6 @@
-import { config } from "./config.js";
-import { enumeration } from "./enumeration.js";
-import { postgreSQLKeyword } from "./postgreSQLKeyword.js";
+import { config } from "../../config/config.js";
+import { enumeration } from "../common/enumeration.js";
+import { postgreSQLKeyword } from "../common/postgreSQLKeyword.js";
 
 const TAB = config.tabSpace;
 let _currentLevel = 0;
