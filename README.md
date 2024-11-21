@@ -4,6 +4,7 @@ note: project này mới chỉ làm được việc đọc file sql thành các 
 
 ```
 todo: bổ sung token với text trong dấu '' thay vì ""
+
 todo: bổ sung format code cho function lấy dữ liệu
 ```
 
