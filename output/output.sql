@@ -12,7 +12,7 @@ WHERE
 (
     account_object_id IS NOT NULL 
     AND
-        account_object_code = "tdmanh"
+        account_object_code = 'tdmanh'
     OR (
         SELECT
             1 

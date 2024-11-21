@@ -54,7 +54,7 @@ export function codeGenerator(node, index, allNodes) {
       break;
     }
     case enumeration.astType.text: {
-      result = tabForNewLine + '"' + node.value + '"';
+      result = tabForNewLine + "'" + node.value + "'";
       break;
     }
     case enumeration.astType.callExpression: {

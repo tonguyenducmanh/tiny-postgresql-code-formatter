@@ -142,14 +142,15 @@ export function generateTokenizer(input) {
       continue;
     }
 
-    // lọc ra văn bản vd "1234"
-    if (char === '"') {
+    //postgresql viết text trong dấu nháy '' thay vì ""
+    // lọc ra văn bản vd '1234'
+    if (char === "'") {
       // tương tự như số, lưu danh sách các văn bản kiếm được
       let value = "";
       // bỏ qua dấu nháy kép ban đầu
       char = input[++current];
-      // lấy ra các ký tự đến khi gặp ký tự " tiếp theo
-      while (char !== '"') {
+      // lấy ra các ký tự đến khi gặp ký tự ' tiếp theo
+      while (char !== "'") {
         value += char;
         char = input[++current];
       }
