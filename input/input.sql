@@ -78,4 +78,4 @@ left join sme.inventory_item ii
     on ii.inventory_item_id = smis.inventory_item_id
 where
     sci.shop_id = :p_shop_id
-    and smis.item_id_shopee = any(:p_item_ids)
+    and smis.item_id_shopee = any(:p_item_ids);

@@ -136,4 +136,4 @@ WHERE
 AND
     smis.item_id_shopee = ANY (
     :p_item_ids 
-)
+);

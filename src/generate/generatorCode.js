@@ -1,6 +1,14 @@
 import { config } from "../../config/config.js";
 import { enumeration } from "../common/enumeration.js";
 import { postgreSQLKeyword } from "../common/postgreSQLKeyword.js";
+import {
+  APOSTROPHECHAR,
+  OPENPARENTHESISCHAR,
+  CLOSEPARENTHESISCHAR,
+  SPACECHAR,
+  BREAKLINECHAR,
+  EMPTYPARENTHESIS,
+} from "../common/constant.js";
 
 const TAB = config.tabSpace;
 let _currentLevel = 0;
@@ -36,12 +44,12 @@ export function codeGenerator(node, index, allNodes) {
 
     case enumeration.astType.semicolon:
     case enumeration.astType.comment: {
-      result = node.value + "\n";
+      result = node.value + BREAKLINECHAR;
       break;
     }
     case enumeration.astType.semi: {
       _startNewLine = true;
-      result = node.value + "\n" + tabForSemi;
+      result = node.value + BREAKLINECHAR + tabForSemi;
       break;
     }
     case enumeration.astType.keyword: {
@@ -54,7 +62,7 @@ export function codeGenerator(node, index, allNodes) {
       break;
     }
     case enumeration.astType.text: {
-      result = tabForNewLine + "'" + node.value + "'";
+      result = tabForNewLine + APOSTROPHECHAR + node.value + APOSTROPHECHAR;
       break;
     }
     case enumeration.astType.callExpression: {
@@ -75,7 +83,7 @@ export function codeGenerator(node, index, allNodes) {
  * @returns subfix
  */
 function buildSubFix(allNodes, index) {
-  let subFix = " ";
+  let subFix = SPACECHAR;
   if (allNodes?.length > 0 && index + 1 < allNodes.length) {
     let nextNode = allNodes[index + 1];
     // nếu node tiếp theo là dấu ; hoặc , thì không build subfix
@@ -107,9 +115,13 @@ function buildCallExpressionText(node, tabSpace) {
       .join("");
   }
   if (parenthesisValue) {
-    result = ["(", parenthesisValue, tabSpace + ")"].join("\n");
+    result = [
+      OPENPARENTHESISCHAR,
+      parenthesisValue,
+      tabSpace + CLOSEPARENTHESISCHAR,
+    ].join(BREAKLINECHAR);
   } else {
-    result = "()";
+    result = EMPTYPARENTHESIS;
   }
   _currentLevel--;
   return result;
@@ -139,18 +151,18 @@ function buildKeyWordText(node, tabSpace, tabForNewLine, allNodes, index) {
 
   if (config.listKeyWordBreakLine.find((x) => valueBuild.compareText(x))) {
     _startNewLine = true;
-    result = "\n" + tabSpace + valueBuild + "\n" + tabSpace;
+    result = BREAKLINECHAR + tabSpace + valueBuild + BREAKLINECHAR + tabSpace;
   } else if (
     config.listMutipleKeyWordBreakLine.find((x) =>
       valueBuild.compareStartText(x)
     )
   ) {
-    result = "\n" + tabSpace + valueBuild + subFix;
+    result = BREAKLINECHAR + tabSpace + valueBuild + subFix;
   } else if (
     config.listMutipleKeyWordBreakLine.find((x) => valueBuild.compareEndText(x))
   ) {
     _startNewLine = true;
-    result = valueBuild + "\n" + tabSpace;
+    result = valueBuild + BREAKLINECHAR + tabSpace;
   } else {
     result = tabForNewLine + valueBuild + subFix;
   }

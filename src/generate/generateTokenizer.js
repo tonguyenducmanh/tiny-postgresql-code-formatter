@@ -1,4 +1,15 @@
 import { enumeration } from "../common/enumeration.js";
+import {
+  SLASHCHAR,
+  ASTERISKCHAR,
+  OPENPARENTHESISCHAR,
+  CLOSEPARENTHESISCHAR,
+  SEMICOLONCHAR,
+  SEMICHAR,
+  HYPHENCHAR,
+  ASTERISKANDSLASH,
+  APOSTROPHECHAR,
+} from "../common/constant.js";
 
 const NUMBERS = /[0-9]/;
 const WHITESPACE = /\s/;
@@ -23,7 +34,7 @@ export function generateTokenizer(input) {
     // lấy ra giá trị text hiện tại
     let char = input[current];
 
-    if (char === "(") {
+    if (char === OPENPARENTHESISCHAR) {
       tokens.push({
         type: enumeration.tokenType.parenthesis,
         value: char,
@@ -32,7 +43,7 @@ export function generateTokenizer(input) {
       continue;
     }
 
-    if (char === ")") {
+    if (char === CLOSEPARENTHESISCHAR) {
       tokens.push({
         type: enumeration.tokenType.parenthesis,
         value: char,
@@ -41,7 +52,7 @@ export function generateTokenizer(input) {
       continue;
     }
 
-    if (char === ";") {
+    if (char === SEMICOLONCHAR) {
       tokens.push({
         type: enumeration.tokenType.semicolon,
         value: char,
@@ -50,7 +61,7 @@ export function generateTokenizer(input) {
       continue;
     }
 
-    if (char === ",") {
+    if (char === SEMICHAR) {
       tokens.push({
         type: enumeration.tokenType.semi,
         value: char,
@@ -60,11 +71,11 @@ export function generateTokenizer(input) {
     }
 
     // lọc ra comment theo dòng --
-    if (char === "-") {
+    if (char === HYPHENCHAR) {
       // kiểm tra ký tự tiếp theo phải - không, có thì lọc tất cả đến khi ra ký tự xuống dòng
       let value = char;
       char = input[++current];
-      if (char === "-") {
+      if (char === HYPHENCHAR) {
         while (input[current] != BREAKLINE) {
           value += char;
           char = input[++current];
@@ -96,12 +107,12 @@ export function generateTokenizer(input) {
     }
 
     // lọc ra comment theo nhiều dòng /* */
-    if (char === "/") {
+    if (char === SLASHCHAR) {
       // kiểm tra ký tự tiếp theo phải * không, có thì lọc tất cả đến khi ra chuỗi "*/"
       let value = char;
       char = input[++current];
-      if (char === "*") {
-        while (value.slice(value.length - 2) != "*/") {
+      if (char === ASTERISKCHAR) {
+        while (value.slice(value.length - 2) != ASTERISKANDSLASH) {
           value += char;
           char = input[++current];
         }
@@ -144,13 +155,13 @@ export function generateTokenizer(input) {
 
     //postgresql viết text trong dấu nháy '' thay vì ""
     // lọc ra văn bản vd '1234'
-    if (char === "'") {
+    if (char === APOSTROPHECHAR) {
       // tương tự như số, lưu danh sách các văn bản kiếm được
       let value = "";
       // bỏ qua dấu nháy kép ban đầu
       char = input[++current];
       // lấy ra các ký tự đến khi gặp ký tự ' tiếp theo
-      while (char !== "'") {
+      while (char !== APOSTROPHECHAR) {
         value += char;
         char = input[++current];
       }

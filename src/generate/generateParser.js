@@ -1,5 +1,10 @@
 import { enumeration } from "../common/enumeration.js";
 
+import {
+  CLOSEPARENTHESISCHAR,
+  OPENPARENTHESISCHAR,
+} from "../common/constant.js";
+
 /**
  * biến đổi các token thành Abstract Syntax Tree
  * @param {array} tokens: danh sách các token đã parse được
@@ -30,7 +35,7 @@ export function generateParser(tokens) {
 
     if (
       token.type === enumeration.tokenType.parenthesis &&
-      token.value === "("
+      token.value === OPENPARENTHESISCHAR
     ) {
       token = tokens[++current];
       // kiểm tra xem trong ngoặc có phần tử nào không
@@ -48,7 +53,7 @@ export function generateParser(tokens) {
         token &&
         (token.type !== enumeration.tokenType.parenthesis ||
           (token.type === enumeration.tokenType.parenthesis &&
-            token.value !== ")"))
+            token.value !== CLOSEPARENTHESISCHAR))
       ) {
         let nextWalk = walk();
         if (nextWalk) {
