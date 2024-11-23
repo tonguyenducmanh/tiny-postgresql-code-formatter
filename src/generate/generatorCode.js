@@ -42,9 +42,12 @@ export function codeGenerator(node, index, allNodes) {
       break;
     }
 
-    case enumeration.astType.semicolon:
-    case enumeration.astType.comment: {
+    case enumeration.astType.semicolon: {
       result = node.value + BREAKLINECHAR;
+      break;
+    }
+    case enumeration.astType.comment: {
+      result = BREAKLINECHAR + tabSpace + node.value + BREAKLINECHAR;
       break;
     }
     case enumeration.astType.semi: {

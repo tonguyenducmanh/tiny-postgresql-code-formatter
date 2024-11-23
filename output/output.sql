@@ -47,7 +47,8 @@ WHERE
         sme.msc_user_join_role mujr 
     WHERE
         role_id = 'c4908208-d527-4b9e-b216-e8fb4fb26a1d'
-)-- query danh sách email nhận nhắc nhở hết hạn tải dữ liệuSELECT
+)
+-- query danh sách email nhận nhắc nhở hết hạn tải dữ liệuSELECT
     * 
 FROM
     sme.email_sent_remind 
@@ -59,7 +60,8 @@ WHERE
 FROM
     sme.report_submission_schedule_config 
 WHERE
-    refid = ''-- query size của dbSELECT
+    refid = ''
+-- query size của dbSELECT
     pg_database_size (
     pd.datname 
 )/ 1024 / 1024 AS size_in_mb 
